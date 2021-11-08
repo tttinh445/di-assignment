@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<title>Register | Express Test</title>
+  <script>
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      window.location.href = '/users';
+    }
+  </script>
+
+  </head>
+  <body>
+    <div>
+      <h1>Register</h1>
+      <form method="post" id="register-form">
+        <!-- user input-->
+        Full Name:<br>
+        <input type="text" name="fullName" placeholder="Enter full name" required><br><br>
+        Email:<br>
+        <input type="email" name="email" placeholder="Enter email" required><br><br>
+        Password:<br>
+        <input type="password" name="password" placeholder="Enter password" required><br><br>
+        <!-- submit button -->
+        <input type="submit" value="Create">
+      </form>
+
+      <br>
+      <a href="/auth/login">Login</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
+      integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      $(document).ready(() => {
+          // login form handle
+          $('#register-form').on('submit', (e) => {
+              e.preventDefault();  //prevent form from submitting
+
+              const data = {};
+              $("#register-form :input").serializeArray().map(item => { data[item.name] = item.value });
+
+              axios.post(`/api/users`, data)
+              .then(result => {
+                alert('Successful');
+                window.location.href = '/auth/login';
+              })
+              .catch((error) => {
+                let { message, errors } = error.response.data;
+                if (errors) {
+                  message = '';
+                  for([key, msg] of Object.entries(errors)) {
+                    message += `${key} ${msg}`;
+                  }
+                }
+                alert(message);
+              });
+          });
+      })
+    </script>
+
+  </body>
+</html>
