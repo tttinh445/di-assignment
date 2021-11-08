@@ -4,7 +4,14 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const logger = require('morgan');
-
+const mongoose = require('mongoose');
+const dbConfig = require('./config/db');
+const passport = require('passport');
+// connect db
+mongoose.connect(dbConfig.url, { useNewUrlParser: true, useUnifiedTopology: true });
+require('./models/User');
+// config passport
+require('./config/passport');
 
 const app = express();
 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<title>Login | Express Test</title>
+  <script>
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      window.location.href = '/users';
+    }
+  </script>
+
+  </head>
+  <body>
+    <div>
+      <h1>Login Form</h1>
+      <form method="post" id="login-form">
+        <!-- user input-->
+        Email:<br>
+        <input type="email" name="email" placeholder="Email" required><br><br>
+        Password:<br>
+        <input type="password" name="password" placeholder="Password" required><br><br>
+        <!-- submit button -->
+        <input type="submit" value="login">
+      </form>
+
+      <br>
+      <a href="/auth/register">Create an account</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
+      integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      $(document).ready(() => {
+        // login form handle
+        $('#login-form').on('submit', (e) => {
+            e.preventDefault();  //prevent form from submitting
+
+            var data = {};
+            $("#login-form :input").serializeArray().map(item => { data[item.name] = item.value });
+
+            axios.post(`/api/auth/login`, data)
+            .then(result => {
+              const { data } = result;
+              localStorage.setItem('accessToken', data.token);
+              localStorage.setItem('userInfo', JSON.stringify(data.user));
+              window.location.href = '/users';
+            })
+            .catch((error) => {
+              alert('Email or password is incorrect.');
+            });
+        });
+      })
+  </script>
+
+  </body>
+</html>

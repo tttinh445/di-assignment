@@ -1,4 +1,5 @@
 const router = require('express').Router();
+
 router.use('/auth', require('./auth'));
 
 router.use(function (err, req, res, next) {
@@ -10,8 +11,8 @@ router.use(function (err, req, res, next) {
       }, {})
     });
   }
+  console.log(err, 'errerrxxx');
   // else {
-  //   console.log(err, 'errerrxxx');
 
   //   return res.status(500).send({ error: err })
   // }
