@@ -41,7 +41,12 @@
           $('#email').val(data.email);
         })
         .catch((error) => {
-          alert('Error.');
+          if (error.response.status == 401 || error.response.status == 403) {
+            console.log('xxx');
+            window.location.href == '/auth/login'
+          } else {
+            alert('Error.');
+          }
         });
       }
 
