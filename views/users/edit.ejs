@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../partials/head'); %>
+  <body>
+    <%- include('../partials/header'); %>
+    <br>
+    <main>
+      <div class="container">
+        <div class="row">
+          <h1>Edit User</h1>
+          <form method="post" id="user-form">
+            <!-- user input-->
+            Full Name:<br>
+            <input type="text" id="fullName" name="fullName" placeholder="Enter full name" required><br><br>
+            Email:<br>
+            <input type="email" id="email" name="email" placeholder="Enter email" required><br><br>
+            <!-- submit button -->
+            <button type="button" onclick="location.href='/users'">Cancel</button>
+            <input type="submit" value="Submit">
+          </form>
+        </div>
+      </div>
+    </main>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
+      integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const userId = '<%-userId%>';
+
+      /** FUNCTION */
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      };
+      const loadData = () => {
+        axios.get(`/api/users/${userId}`, config)
+        .then(result => {
+          const { data } = result;
+          $('#fullName').val(data.fullName);
+          $('#email').val(data.email);
+        })
+        .catch((error) => {
+          alert('Error.');
+        });
+      }
+
+      /** EXE */
+      $(document).ready(() => {
+        // load data
+        loadData();
+
+        // login form handle
+        $('#user-form').on('submit', (e) => {
+            e.preventDefault();  //prevent form from submitting
+
+            var data = {};
+            $("#user-form :input").serializeArray().map(item => { data[item.name] = item.value });
+
+            axios.put(`/api/users/${userId}`, data, config)
+            .then(result => {
+              window.location.href = '/users';
+            })
+            .catch((error) => {
+              let { message, errors } = error.response.data;
+                if (errors) {
+                  message = '';
+                  for([key, msg] of Object.entries(errors)) {
+                    message += `${key} ${msg}\n`;
+                  }
+                }
+                alert(message);
+            });
+        });
+      })
+  </script>
+
+  </body>
+</html>

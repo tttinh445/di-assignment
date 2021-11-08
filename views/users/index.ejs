@@ -1,1 +1,73 @@
-user
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('../partials/head'); %>
+  <body>
+    <%- include('../partials/header'); %>
+    <main>
+      <table class="table" id="table">
+        <thead>
+          <td>ID</td>
+          <td>Full Name</td>
+          <td>Email</td>
+          <td>Action</td>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4">No data</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
+      integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/javascripts/main.js"></script>
+    <script>
+      /** FUNCTION */
+      const config = {
+        headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+      };
+      const deleteUser = (id) => {
+        if (confirm('Are you sure?')) {
+          axios.delete(`/api/users/${id}`, config)
+          .then(result => {
+            $(`#${id}`).remove();
+          })
+          .catch((error) => {
+            alert('Error.');
+          });
+        }
+      }
+
+      const loadData = () => {
+        axios.get(`/api/users`, config)
+        .then(result => {
+          const { data } = result;
+          if (Array.isArray(data)) {
+            let td = '';
+            data.forEach(item => {
+              td += `<tr id="${item.id}"><td>${item.id}</td><td>${item.fullName}</td><td>${item.email}</td><td>
+                <a href="/users/edit/${item.id}">edit</button>
+                <a href="#" onClick="deleteUser('${item.id}')">delete</a>
+              </td></tr>`;
+            });
+            $('#table tbody').html(td);
+          }
+        })
+        .catch((error) => {
+          alert('Error.');
+        });
+      }
+
+
+      /** EXE */
+      $(document).ready(() => {
+        // load data
+        loadData();
+      })
+  </script>
+
+  </body>
+</html>
