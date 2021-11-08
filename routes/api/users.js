@@ -70,7 +70,6 @@ router.put('/:id',
     await UserModel.updateOne({ _id: req.params.id }, req.body);
     return res.status(200).json({ success: true });
   } catch(error) {
-    console.log(error);
     if (error.message.indexOf('duplicate key error') !== -1) {
       return res.status(400).json({ message: "email already exists" });
     }
