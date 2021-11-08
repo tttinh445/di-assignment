@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+require('dotenv').config()
 const logger = require('morgan');
 const mongoose = require('mongoose');
 const dbConfig = require('./config/db');
@@ -12,7 +13,6 @@ mongoose.connect(dbConfig.url, { useNewUrlParser: true, useUnifiedTopology: true
 require('./models/User');
 // config passport
 require('./config/passport');
-
 const app = express();
 
 // view engine setup
