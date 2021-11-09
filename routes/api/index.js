@@ -12,6 +12,7 @@ router.use(function (err, req, res, next) {
       }, {})
     });
   }
+  console.log(err, 'errerrxxx');
   // else {
 
   //   return res.status(500).send({ error: err })

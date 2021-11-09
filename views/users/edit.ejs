@@ -26,6 +26,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
       integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/javascripts/main.js"></script>
     <script>
       const userId = '<%-userId%>';
 
@@ -42,6 +43,7 @@
         })
         .catch((error) => {
           if (error.response.status == 401 || error.response.status == 403) {
+            console.log('xxx');
             window.location.href == '/auth/login'
           } else {
             alert('Error.');
