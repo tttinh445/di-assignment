@@ -16,14 +16,9 @@ const transform = (result) => {
 
 /* GET users listing. */
 router.get('/', auth, async (req, res) => {
-  let users = await UserModel.find();
+  const users = await UserModel.find();
   res.status(200).send(users.map(item => {
-    return {
-      id: item._id,
-      fullName: item.fullName,
-      email: item.email,
-      createdAt: item.createdAt,
-    };
+    return transform(item)
   }));
 });
 
@@ -62,15 +57,16 @@ router.put('/:id',
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors:errors.mapped()});
     }
+
     const user = await UserModel.findOne({ _id: { $ne: req.params.id }, email: req.body.email });
     if (user) {
       return res.status(400).json({ message: "email already exists" });
     }
 
+
     await UserModel.updateOne({ _id: req.params.id }, req.body);
     return res.status(200).json({ success: true });
   } catch(error) {
-    console.log(error);
     if (error.message.indexOf('duplicate key error') !== -1) {
       return res.status(400).json({ message: "email already exists" });
     }
@@ -81,6 +77,10 @@ router.put('/:id',
 /* DELETE remove item */
 router.delete('/:id', auth, async (req, res, next) => {
   try {
+    // dont allow delete yourself
+    if (req.params.id == req.user.id) {
+      return res.status(400).json({ message: "don't allow delete yourself." });
+    }
     const result = await UserModel.remove({ _id: req.params.id });
     return res.json({success: result.deletedCount === 1});
   } catch(e) {
