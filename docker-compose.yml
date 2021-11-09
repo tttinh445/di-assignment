@@ -1,0 +1,28 @@
+# for local development
+version: '3.7'
+services:
+  mongo:
+    image: mongo:5.0.2
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./db:/data/db
+
+  di-assignment:
+    build:
+      context: .
+    ports:
+      - '3000:3000'
+    environment:
+      - DB_URL=mongodb://mongo:27017/express_test
+      - JWT_SECRET={T?`Sk+WpQ-Cz$Atm#H}zvnQ_M~6nas6
+      - JWT_EXPIRES_IN=3600
+    command: /bin/sh -c "yarn dev"
+    # depends_on:
+    #   - mongo
+    links:
+      - mongo
+
+
