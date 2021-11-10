@@ -11,11 +11,9 @@ router.use(function (err, req, res, next) {
         return errors;
       }, {})
     });
+  } else {
+    return res.status(500).send({ message: 'Internal server error'})
   }
-  // else {
-
-  //   return res.status(500).send({ error: err })
-  // }
 
   return next(err);
 });

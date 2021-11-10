@@ -7,7 +7,7 @@ const router = express.Router();
  */
 
 router.get("/", (req, res) => {
-  return res.render('users/index', { title: 'User' });
+  return res.render('users/index', { title: 'User', query: req.query });
 });
 
 router.get("/edit/:id", (req, res) => {

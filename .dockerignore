@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+yarn-error.log
+# Dockerfile*
+# docker-compose*
+# .dockerignore
+.git
+.gitignore
+*/bin
+*/obj
+README.md
+LICENSE
+.vscode
+debug.log
+db

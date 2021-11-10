@@ -5,4 +5,11 @@ $(document).ready(() => {
     localStorage.removeItem('accessToken');
     window.location.href = '/auth/login';
   });
+
+  // show user name
+  if (localStorage.getItem('userInfo')) {
+    let userInfo = JSON.parse(localStorage.getItem('userInfo'));
+    $('#tag-user-name').text(userInfo.fullName)
+  }
+
 });

@@ -4,25 +4,40 @@
   <body>
     <%- include('../partials/header'); %>
     <main>
-      <table class="table" id="table">
-        <thead>
-          <td>ID</td>
-          <td>Full Name</td>
-          <td>Email</td>
-          <td>Action</td>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="4">No data</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="container">
+        <form class="row g-3" id="search-form">
+          <div class="col-auto">
+            <label for="inputPassword2" class="visually-hidden">Password</label>
+            <input
+              type="text" class="form-control" id="inputPassword2" name="q" value="<%= query.q %>"
+              placeholder="Enter Full Name">
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">Search</button>
+          </div>
+        </form>
+
+        <table class="table" id="table">
+          <thead>
+            <td>ID</td>
+            <td>Full Name</td>
+            <td>Email</td>
+            <td>Action</td>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="4">No data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </main>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
       integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
     <script src="/javascripts/main.js"></script>
     <script>
       /** FUNCTION */
@@ -41,20 +56,31 @@
         }
       }
 
-      const loadData = () => {
+      const loadData = (query = '') => {
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        if (query) {
+          config.params = {
+            fullName: query
+          }
+        }
         axios.get(`/api/users`, config)
         .then(result => {
           const { data } = result;
-          if (Array.isArray(data)) {
-            let td = '';
+          let td = '';
+          if (Array.isArray(data) && data.length > 0) {
             data.forEach(item => {
               td += `<tr id="${item.id}"><td>${item.id}</td><td>${item.fullName}</td><td>${item.email}</td><td>
                 <a href="/users/edit/${item.id}">edit</button>
-                <a href="#" onClick="deleteUser('${item.id}')">delete</a>
-              </td></tr>`;
+              `;
+              if (userInfo.id != item.id) {
+                td += `<a href="#" onClick="deleteUser('${item.id}')">delete</a>`
+              }
+              td += `</td></tr>`;
             });
-            $('#table tbody').html(td);
+          } else {
+            td += `<tr><td colspan="4">No data</td></tr>`;
           }
+          $('#table tbody').html(td);
         })
         .catch((error) => {
           if (error.response.status == 401 || error.response.status == 403) {
@@ -69,7 +95,8 @@
       /** EXE */
       $(document).ready(() => {
         // load data
-        loadData();
+        const query = '<%= query.q  %>';
+        loadData(query);
       })
   </script>
 

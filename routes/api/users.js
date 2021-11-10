@@ -16,14 +16,13 @@ const transform = (result) => {
 
 /* GET users listing. */
 router.get('/', auth, async (req, res) => {
-  let users = await UserModel.find();
+  let params = {};
+  if (req.query.fullName) {
+    params = {fullName: { $regex: '.*' + req.query.fullName + '.*' }}
+  }
+  const users = await UserModel.find(params);
   res.status(200).send(users.map(item => {
-    return {
-      id: item._id,
-      fullName: item.fullName,
-      email: item.email,
-      createdAt: item.createdAt,
-    };
+    return transform(item)
   }));
 });
 
@@ -45,8 +44,14 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', auth, async (req, res, next) => {
   try {
     const user = await UserModel.findOne({ _id: req.params.id });
+    if (!user) {
+      return res.status(404).json({ message: "user not found"});
+    }
     return res.json(transform(user));
   } catch(error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({ message: "user not found"});
+    }
     next(error)
   }
 });
@@ -62,6 +67,7 @@ router.put('/:id',
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors:errors.mapped()});
     }
+
     const user = await UserModel.findOne({ _id: { $ne: req.params.id }, email: req.body.email });
     if (user) {
       return res.status(400).json({ message: "email already exists" });
@@ -72,6 +78,8 @@ router.put('/:id',
   } catch(error) {
     if (error.message.indexOf('duplicate key error') !== -1) {
       return res.status(400).json({ message: "email already exists" });
+    } else if (error.name === 'CastError') {
+      return res.status(404).json({ message: "user not found"});
     }
     next(error)
   }
@@ -80,9 +88,16 @@ router.put('/:id',
 /* DELETE remove item */
 router.delete('/:id', auth, async (req, res, next) => {
   try {
+    // dont allow delete yourself
+    if (req.params.id == req.user.id) {
+      return res.status(400).json({ message: "don't allow delete yourself." });
+    }
     const result = await UserModel.remove({ _id: req.params.id });
     return res.json({success: result.deletedCount === 1});
-  } catch(e) {
+  } catch(error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({ message: "user not found"});
+    }
     return res.status(500).json({ message: "internal server error." });
   }
 });
