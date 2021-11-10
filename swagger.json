@@ -1,0 +1,380 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "DI assignment api",
+    "description": "",
+    "version": "1.0"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "host": "localhost:3000",
+  "basePath": "/api",
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "value": "Bearer + token",
+      "description": "Please fill in the input:  Bearer + token (token: user get it after call auth/login api)"
+    }
+  },
+
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "x-swagger-router-controller": "auth",
+        "operationId": "auth",
+        "tags": [
+          "Auth"
+        ],
+        "description": "",
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "description": "User login",
+          "required": false,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "example": "user@gmail.com"
+              },
+              "password": {
+                "type": "string",
+                "example": "user@123"
+              }
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Success!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "618a6184d4275e371246412d"
+                    },
+                    "fullName": {
+                      "type": "string",
+                      "example": "User1"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "user@gmail.com"
+                    }
+                  }
+                },
+                "token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOGE2MTg0ZDQyNzVlMzcxMjQ2NDEyZCIsInRpbWUiOjE2MzY1MDYwODEwMzgsImlhdCI6MTYzNjUwNjA4MSwiZXhwIjoxNjM2NTA5NjgxfQ.KgICV3VN0v4VKusvmGa6ihdMw2AeubFvD3_n0d9V-Rs"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "x-swagger-router-controller": "users",
+        "operationId": "get",
+        "tags": [
+          "Users"
+        ],
+        "description": "Get list of users. This api does not support pagination yet.",
+        "parameters": [
+          {
+            "name": "fullName",
+            "in": "query",
+            "description": "Search by Full Name",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+
+      "post": {
+        "x-swagger-router-controller": "users",
+        "operationId": "post",
+        "tags": [
+          "Users"
+        ],
+        "description": "Create a new user. This api support for signup feature.",
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "description": "Create a new user",
+          "required": false,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "fullName": {
+                "type": "string",
+                "example": "User1"
+              },
+              "email": {
+                "type": "string",
+                "example": "user@gmail.com"
+              },
+              "password": {
+                "type": "string",
+                "min": 6,
+                "max": 50,
+                "example": "user@123"
+              }
+            }
+          }
+        }],
+        "responses": {
+          "201": {
+            "description": "Create successful!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "618a6184d4275e371246412d"
+                },
+                "fullName": {
+                  "type": "string",
+                  "example": "User1"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "user@gmail.com"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "example": "2021-11-10T01:44:07.963Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "x-swagger-router-controller": "users",
+        "operationId": "getone",
+        "tags": [
+          "Users"
+        ],
+        "description": "Get a single user.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to return",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "618a6184d4275e371246412d"
+                },
+                "fullName": {
+                  "type": "string",
+                  "example": "User1"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "user@gmail.com"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "example": "2021-11-10T01:44:07.963Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "x-swagger-router-controller": "users",
+        "operationId": "put",
+        "tags": [
+          "Users"
+        ],
+        "description": "Update a user.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of user to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+          "in": "body",
+          "name": "body",
+          "description": "Update a user",
+          "required": false,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "fullName": {
+                "type": "string",
+                "example": "User1"
+              },
+              "email": {
+                "type": "string",
+                "example": "user@gmail.com"
+              }
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Update successful!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": "true",
+                  "description": "true: update successful. false: update failure."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "x-swagger-router-controller": "users",
+        "operationId": "delete",
+        "tags": [
+          "Users"
+        ],
+        "description": "Delete a user.",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "description": "ID of user to return",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "Delete successful!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": "true",
+                  "description": "true: update successful. false: update failure."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    }
+  }
+}

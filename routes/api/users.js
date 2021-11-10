@@ -44,8 +44,14 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', auth, async (req, res, next) => {
   try {
     const user = await UserModel.findOne({ _id: req.params.id });
+    if (!user) {
+      return res.status(404).json({ message: "user not found"});
+    }
     return res.json(transform(user));
   } catch(error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({ message: "user not found"});
+    }
     next(error)
   }
 });
@@ -67,12 +73,13 @@ router.put('/:id',
       return res.status(400).json({ message: "email already exists" });
     }
 
-
     await UserModel.updateOne({ _id: req.params.id }, req.body);
     return res.status(200).json({ success: true });
   } catch(error) {
     if (error.message.indexOf('duplicate key error') !== -1) {
       return res.status(400).json({ message: "email already exists" });
+    } else if (error.name === 'CastError') {
+      return res.status(404).json({ message: "user not found"});
     }
     next(error)
   }
@@ -87,7 +94,10 @@ router.delete('/:id', auth, async (req, res, next) => {
     }
     const result = await UserModel.remove({ _id: req.params.id });
     return res.json({success: result.deletedCount === 1});
-  } catch(e) {
+  } catch(error) {
+    if (error.name === 'CastError') {
+      return res.status(404).json({ message: "user not found"});
+    }
     return res.status(500).json({ message: "internal server error." });
   }
 });

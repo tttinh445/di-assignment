@@ -8,12 +8,19 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 const dbConfig = require('./config/db');
 const passport = require('passport');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
+
 // connect db
 mongoose.connect(dbConfig.url, { useNewUrlParser: true, useUnifiedTopology: true });
 require('./models/User');
 // config passport
 require('./config/passport');
 const app = express();
+// Swagger UI Express
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
