@@ -31,4 +31,6 @@ To cleanup
 $ docker-compose down
 ```
 
-After run command above, open your browser and access link: http://localhost:3000
+After run command above, open your browser and access the link: http://localhost:3000
+
+Api document: http://localhost:3000/api-docs/#
