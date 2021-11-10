@@ -16,7 +16,11 @@ const transform = (result) => {
 
 /* GET users listing. */
 router.get('/', auth, async (req, res) => {
-  const users = await UserModel.find();
+  let params = {};
+  if (req.query.fullName) {
+    params = {fullName: { $regex: '.*' + req.query.fullName + '.*' }}
+  }
+  const users = await UserModel.find(params);
   res.status(200).send(users.map(item => {
     return transform(item)
   }));
